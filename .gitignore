@@ -20,3 +20,7 @@ __pycache__/
 *.log
 *.tmp
 .DS_Store
+
+.env
+dist
+node_modules
