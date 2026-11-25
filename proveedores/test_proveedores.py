@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
-from .models import Proveedor
+from proveedores.models import Proveedor
 from inventario.models import Repuesto
 
 

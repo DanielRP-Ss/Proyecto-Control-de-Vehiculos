@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from vehiculos.models import Vehiculo
-from .models import OrdenTrabajo
+from ordenes_de_trabajo.models import OrdenTrabajo
 
 
 class OrdenTrabajoTests(APITestCase):

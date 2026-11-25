@@ -15,31 +15,23 @@ import { listarTodosLosVehiculos } from "../../services/vehiculosService";
 import { formatearFecha } from "../../utils/formato";
 import FiltrosMantenimientos from "./FiltrosMantenimientos";
 import TablaMantenimientos from "./TablaMantenimientos";
-
 const CLAVES_URL = ["estado", "vehiculo", "page"];
 const SIN_PARAMETROS = {};
-
 export default function MantenimientosLista() {
   const { esAdmin } = usePermisos();
   const [parametros, actualizar] = useParametrosURL(CLAVES_URL);
-
-  // El filtro `vehiculo` debe ser un id numérico (evita enviar basura al backend desde la URL).
   const parametrosConsulta = useMemo(() => {
     const { vehiculo, ...resto } = parametros;
     return /^\d+$/.test(vehiculo ?? "") ? { ...resto, vehiculo } : resto;
   }, [parametros]);
-
   const lista = useConsulta(listarMantenimientos, parametrosConsulta);
   const catalogo = useConsulta(listarTodosLosVehiculos, SIN_PARAMETROS);
-
   const vehiculos = catalogo.datos;
   const vehiculosPorId = useMemo(() => new Map((vehiculos ?? []).map((v) => [v.id, v])), [vehiculos]);
-
   const [exito, setExito] = useMensajeFlash();
   const [aEliminar, setAEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
   const [errorBorrado, setErrorBorrado] = useState(null);
-
   const confirmarEliminar = async () => {
     const mantenimiento = aEliminar;
     setAEliminar(null);
@@ -59,7 +51,6 @@ export default function MantenimientosLista() {
       lista.recargar();
     }
   };
-
   let contenido;
   if (lista.cargando || eliminando) {
     contenido = <Loader mensaje="Cargando mantenimientos..." />;
@@ -85,9 +76,7 @@ export default function MantenimientosLista() {
       </>
     );
   }
-
   const placaEliminar = aEliminar ? vehiculosPorId.get(aEliminar.vehiculo)?.placa ?? `#${aEliminar.vehiculo}` : "";
-
   return (
     <>
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
@@ -98,20 +87,16 @@ export default function MantenimientosLista() {
           <span className="badge text-bg-secondary">Solo lectura</span>
         )}
       </div>
-
       <AlertSuccess mensaje={exito} onCerrar={() => setExito("")} />
       <AlertError error={errorBorrado} />
       {catalogo.error && <AlertError error={catalogo.error} />}
-
       <FiltrosMantenimientos
         key={JSON.stringify(parametros)}
         inicial={parametros}
         vehiculos={vehiculos ?? []}
         onAplicar={actualizar}
       />
-
       {contenido}
-
       {aEliminar && (
         <ConfirmModal
           mensaje={`¿Eliminar el mantenimiento programado para ${placaEliminar} el ${formatearFecha(aEliminar.fecha_programada)}?`}

@@ -1,20 +1,16 @@
 import { useConsulta } from "../../hooks/useConsulta";
 import { usePermisos } from "../../hooks/usePermisos";
-
 import {
   listarRepuestos,
   eliminarRepuesto,
   resumenInventario
 } from "../../services/inventarioService";
-
 import {
   dinero,
   listarTodosLosProveedores
 } from "../bloqueC/compartido";
-
 import ListaModulo from "../bloqueC/ListaModulo";
 import AlertError from "../../components/AlertError";
-
 const CLAVES = [
   "buscar",
   "proveedor",
@@ -22,18 +18,14 @@ const CLAVES = [
   "ordenar",
   "page"
 ];
-
 export default function InventarioLista() {
   const { esAdmin } = usePermisos();
-
   const proveedores = useConsulta(listarTodosLosProveedores);
   const resumen = useConsulta(resumenInventario);
-
   const opciones = (proveedores.datos || []).map(p => ({
     value: p.id,
     label: p.nombre
   }));
-
   const columnas = [
     {
       titulo: "Código",
@@ -72,7 +64,6 @@ export default function InventarioLista() {
         r.proveedor
     }
   ];
-
   const filtros = [
     {
       nombre: "buscar",
@@ -102,11 +93,9 @@ export default function InventarioLista() {
       ]
     }
   ];
-
   return (
     <>
       <AlertError error={proveedores.error} />
-
       <ListaModulo
         titulo="Inventario"
         ruta="/inventario"
@@ -122,7 +111,6 @@ export default function InventarioLista() {
         resumen={
           <>
             <AlertError error={resumen.error} />
-
             {resumen.datos && (
               <div className="row g-2 mb-3">
                 {[

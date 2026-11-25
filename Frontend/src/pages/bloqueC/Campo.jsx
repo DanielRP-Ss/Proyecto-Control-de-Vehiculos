@@ -1,5 +1,4 @@
 import CampoForm from "../../components/CampoForm";
-
 export default function Campo({
   nombre,
   etiqueta,
@@ -10,7 +9,6 @@ export default function Campo({
   ...props
 }) {
   const error = form.errores[nombre];
-
   const comun = {
     id: nombre,
     name: nombre,
@@ -19,7 +17,6 @@ export default function Campo({
     required: obligatorio,
     ...props
   };
-
   return (
     <CampoForm
       id={nombre}
@@ -33,7 +30,6 @@ export default function Campo({
           className={`form-select ${error ? "is-invalid" : ""}`}
         >
           <option value="">Seleccione...</option>
-
           {opciones.map(o => (
             <option key={o.value} value={o.value}>
               {o.label}

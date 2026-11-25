@@ -1,0 +1,10 @@
+Proyecto 02 — Desarrollo del frontend con React para la API REST del Proyecto 1
+Desarrollo de Software IV — Informática Empresarial, UCR Sede Regional del Pacífico
+
+Enlace al repositorio GitHub:
+https://github.com/DanielRP-Ss/Proyecto-Control-de-Vehiculos
+
+Integrantes:
+- Daniel Rojas Portillo C5J232
+- Malcolm Méndez C4H192
+- Yariel Jiménez C4G183

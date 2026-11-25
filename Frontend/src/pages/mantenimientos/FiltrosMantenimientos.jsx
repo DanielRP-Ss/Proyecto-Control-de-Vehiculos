@@ -1,24 +1,17 @@
 import { useState } from "react";
 import { ESTADOS_MANTENIMIENTO } from "../../utils/constantes";
-
 const VACIO = { estado: "", vehiculo: "" };
-
-// Filtros combinables (estado + vehículo) aplicados en el servidor.
 export default function FiltrosMantenimientos({ inicial, vehiculos, onAplicar }) {
   const [valores, setValores] = useState({ ...VACIO, ...inicial });
-
   const cambiar = (e) => setValores({ ...valores, [e.target.name]: e.target.value });
-
   const aplicar = (e) => {
     e.preventDefault();
     onAplicar({ ...valores, page: "" });
   };
-
   const limpiar = () => {
     setValores(VACIO);
     onAplicar({ ...VACIO, page: "" });
   };
-
   return (
     <form onSubmit={aplicar} className="card card-body mb-3">
       <div className="row g-2 align-items-end">

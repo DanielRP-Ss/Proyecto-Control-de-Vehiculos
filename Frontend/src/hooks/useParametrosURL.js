@@ -1,12 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-
-// Los filtros y la página viven en la URL (?estado=ACTIVO&page=2):
-// el botón "atrás" funciona, se puede recargar y se puede compartir el enlace.
-// `claves` debe ser un arreglo constante (nivel de módulo).
 export function useParametrosURL(claves) {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const parametros = useMemo(() => {
     const resultado = {};
     claves.forEach((clave) => {
@@ -15,7 +10,6 @@ export function useParametrosURL(claves) {
     });
     return resultado;
   }, [searchParams, claves]);
-
   const actualizar = useCallback(
     (cambios) => {
       setSearchParams((previos) => {
@@ -30,6 +24,5 @@ export function useParametrosURL(claves) {
     },
     [setSearchParams]
   );
-
   return [parametros, actualizar];
 }

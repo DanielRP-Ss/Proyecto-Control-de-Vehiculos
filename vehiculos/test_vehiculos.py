@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Vehiculo
+from vehiculos.models import Vehiculo
 
 
 class VehiculoAPITests(APITestCase):

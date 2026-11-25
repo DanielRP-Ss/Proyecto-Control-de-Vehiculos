@@ -1,22 +1,18 @@
 import { useConsulta } from "../../hooks/useConsulta";
 import { useFormulario } from "../../hooks/useFormulario";
-
 import {
   listarTodosLosRepuestos,
   registrarConsumo
 } from "../../services/inventarioService";
-
 import Campo from "../bloqueC/Campo";
 import AlertError from "../../components/AlertError";
 import Loader from "../../components/Loader";
 import { dinero } from "../bloqueC/compartido";
-
 export default function ConsumoFormulario({
   orden,
   onExito
 }) {
   const r = useConsulta(listarTodosLosRepuestos);
-
   const form = useFormulario({
     inicial: {
       repuesto: "",
@@ -24,23 +20,17 @@ export default function ConsumoFormulario({
     },
     campos: ["repuesto", "cantidad"]
   });
-
   const seleccionado = r.datos?.find(
     p => p.id === Number(form.valores.repuesto)
   );
-
   async function enviar(e) {
     e.preventDefault();
-
     if (form.guardando) return;
-
     const cantidad = Number(form.valores.cantidad);
     const errores = {};
-
     if (!seleccionado) {
       errores.repuesto = "Seleccione un repuesto";
     }
-
     if (!Number.isInteger(cantidad) || cantidad < 1) {
       errores.cantidad =
         "Cantidad debe ser un entero positivo";
@@ -50,47 +40,35 @@ export default function ConsumoFormulario({
     ) {
       errores.cantidad = "Stock insuficiente";
     }
-
     form.setErroresLocales(errores);
     form.setErrorServidor(null);
-
     if (Object.keys(errores).length) return;
-
     form.setGuardando(true);
-
     const res = await registrarConsumo({
       orden: orden.id,
       repuesto: seleccionado.id,
       cantidad
     });
-
     form.setGuardando(false);
-
     if (res.ok) {
       onExito(
         res.datos?.mensaje ||
         "Consumo registrado correctamente."
       );
-
       r.recargar();
     } else {
       form.setErrorServidor(res);
     }
   }
-
   if (r.cargando) return <Loader />;
-
   if (r.error) return <AlertError error={r.error} />;
-
   return (
     <form
       className="card card-body mb-3"
       onSubmit={enviar}
     >
       <h5>Registrar consumo</h5>
-
       <AlertError error={form.general} />
-
       <Campo
         form={form}
         nombre="repuesto"
@@ -100,7 +78,6 @@ export default function ConsumoFormulario({
           label: `${p.nombre} — stock: ${p.stock}`
         }))}
       />
-
       <Campo
         form={form}
         nombre="cantidad"
@@ -109,7 +86,6 @@ export default function ConsumoFormulario({
         min="1"
         step="1"
       />
-
       {seleccionado && (
         <p>
           Subtotal estimado:{" "}
@@ -119,7 +95,6 @@ export default function ConsumoFormulario({
           )}
         </p>
       )}
-
       <button
         className="btn btn-primary"
         disabled={form.guardando}

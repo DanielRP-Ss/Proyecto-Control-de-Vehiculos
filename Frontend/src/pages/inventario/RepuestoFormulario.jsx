@@ -1,15 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useFormulario } from "../../hooks/useFormulario";
 import { usePermisos } from "../../hooks/usePermisos";
-
 import {
   crearRepuesto,
   actualizarRepuesto
 } from "../../services/inventarioService";
-
 import Campo from "../bloqueC/Campo";
 import AlertError from "../../components/AlertError";
-
 const VACIO = {
   nombre: "",
   codigo: "",
@@ -18,39 +15,31 @@ const VACIO = {
   precio_unitario: "",
   proveedor: ""
 };
-
 export default function RepuestoFormulario({
   repuesto,
   proveedores
 }) {
   const navigate = useNavigate();
   const { esAdmin } = usePermisos();
-
   const form = useFormulario({
     inicial: repuesto || VACIO,
     campos: Object.keys(VACIO)
   });
-
   async function enviar(e) {
     e.preventDefault();
-
     if (!esAdmin || form.guardando) return;
-
     const v = form.valores;
     const errores = {};
-
     for (const k of ["nombre", "codigo"]) {
       if (!v[k].trim()) {
         errores[k] = "Campo obligatorio";
       }
     }
-
     for (const k of ["stock", "stock_minimo"]) {
       if (!/^\d+$/.test(String(v[k]))) {
         errores[k] = "Ingrese un entero no negativo";
       }
     }
-
     if (
       !String(v.precio_unitario).trim() ||
       !Number.isFinite(Number(v.precio_unitario)) ||
@@ -58,16 +47,12 @@ export default function RepuestoFormulario({
     ) {
       errores.precio_unitario = "Precio inválido";
     }
-
     if (!v.proveedor) {
       errores.proveedor = "Seleccione un proveedor";
     }
-
     form.setErroresLocales(errores);
     form.setErrorServidor(null);
-
     if (Object.keys(errores).length) return;
-
     const payload = {
       nombre: v.nombre.trim(),
       codigo: v.codigo.trim(),
@@ -76,17 +61,13 @@ export default function RepuestoFormulario({
       precio_unitario: Number(v.precio_unitario).toFixed(2),
       proveedor: Number(v.proveedor)
     };
-
     form.setGuardando(true);
-
     const res = await (
       repuesto
         ? actualizarRepuesto(repuesto.id, payload)
         : crearRepuesto(payload)
     );
-
     form.setGuardando(false);
-
     if (res.ok) {
       navigate("/inventario", {
         state: {
@@ -97,7 +78,6 @@ export default function RepuestoFormulario({
       form.setErrorServidor(res);
     }
   }
-
   return (
     <form
       className="card card-body"
@@ -105,27 +85,23 @@ export default function RepuestoFormulario({
       onSubmit={enviar}
     >
       <AlertError error={form.general} />
-
       {!esAdmin && (
         <p className="alert alert-warning">
           Solo administradores pueden guardar.
         </p>
       )}
-
       <Campo
         form={form}
         nombre="nombre"
         etiqueta="Nombre"
         maxLength={120}
       />
-
       <Campo
         form={form}
         nombre="codigo"
         etiqueta="Código"
         maxLength={30}
       />
-
       <Campo
         form={form}
         nombre="stock"
@@ -134,7 +110,6 @@ export default function RepuestoFormulario({
         min="0"
         step="1"
       />
-
       <Campo
         form={form}
         nombre="stock_minimo"
@@ -143,7 +118,6 @@ export default function RepuestoFormulario({
         min="0"
         step="1"
       />
-
       <Campo
         form={form}
         nombre="precio_unitario"
@@ -152,7 +126,6 @@ export default function RepuestoFormulario({
         min="0"
         step="0.01"
       />
-
       <Campo
         form={form}
         nombre="proveedor"
@@ -162,7 +135,6 @@ export default function RepuestoFormulario({
           label: p.nombre
         }))}
       />
-
       <div className="d-flex gap-2">
         <button
           className="btn btn-primary"
@@ -170,7 +142,6 @@ export default function RepuestoFormulario({
         >
           Guardar
         </button>
-
         <Link
           className="btn btn-outline-secondary"
           to="/inventario"

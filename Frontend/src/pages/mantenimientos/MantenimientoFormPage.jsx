@@ -5,23 +5,16 @@ import { useConsulta } from "../../hooks/useConsulta";
 import { obtenerMantenimiento } from "../../services/mantenimientosService";
 import { listarTodosLosVehiculos } from "../../services/vehiculosService";
 import MantenimientoFormulario from "./MantenimientoFormulario";
-
 const sinConsulta = async () => ({ ok: true, status: 200, datos: null });
 const SIN_PARAMETROS = {};
-
-// Rutas: /mantenimientos/nuevo y /mantenimientos/:id/editar
-// Necesita dos consultas: el catálogo de vehículos (selector) y, al editar, el mantenimiento.
 export default function MantenimientoFormPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const editando = Boolean(id);
-
   const catalogo = useConsulta(listarTodosLosVehiculos, SIN_PARAMETROS);
   const registro = useConsulta(editando ? obtenerMantenimiento : sinConsulta, id);
-
   const preseleccion = /^\d+$/.test(searchParams.get("vehiculo") ?? "") ? searchParams.get("vehiculo") : "";
   const error = catalogo.error || registro.error;
-
   let contenido;
   if (catalogo.cargando || registro.cargando) contenido = <Loader mensaje="Cargando datos..." />;
   else if (error) {
@@ -41,7 +34,6 @@ export default function MantenimientoFormPage() {
       />
     );
   }
-
   return (
     <>
       <h4 className="mb-3">{editando ? "Editar mantenimiento" : "Programar mantenimiento"}</h4>

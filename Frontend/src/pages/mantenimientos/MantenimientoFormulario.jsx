@@ -9,7 +9,6 @@ import { actualizarMantenimiento, crearMantenimiento } from "../../services/mant
 import { ESTADOS_MANTENIMIENTO } from "../../utils/constantes";
 import { formatearKm } from "../../utils/formato";
 import { CAMPOS_MANTENIMIENTO, validarMantenimiento } from "./validarMantenimiento";
-
 const VACIO = {
   vehiculo: "",
   descripcion: "",
@@ -17,7 +16,6 @@ const VACIO = {
   fecha_programada: "",
   estado: "PENDIENTE",
 };
-
 const desdeApi = (m) => ({
   vehiculo: String(m.vehiculo),
   descripcion: m.descripcion,
@@ -25,14 +23,10 @@ const desdeApi = (m) => ({
   fecha_programada: m.fecha_programada,
   estado: m.estado,
 });
-
-// `vehiculos`: catálogo completo traído de la API (selector de relación).
-// `mantenimiento`: registro a editar (precarga) o null para crear.
 export default function MantenimientoFormulario({ mantenimiento, vehiculos, preseleccion = "" }) {
   const navigate = useNavigate();
   const { esAdmin } = usePermisos();
   const editando = Boolean(mantenimiento);
-
   const {
     valores, cambiar, errores, general, guardando,
     setGuardando, setErroresLocales, setErrorServidor,
@@ -40,16 +34,13 @@ export default function MantenimientoFormulario({ mantenimiento, vehiculos, pres
     inicial: mantenimiento ? desdeApi(mantenimiento) : { ...VACIO, vehiculo: preseleccion },
     campos: CAMPOS_MANTENIMIENTO,
   });
-
   const vehiculoElegido = vehiculos.find((v) => String(v.id) === valores.vehiculo);
-
   const enviar = async (e) => {
     e.preventDefault();
     setErrorServidor(null);
     const encontrados = validarMantenimiento(valores, vehiculoElegido);
     setErroresLocales(encontrados);
     if (Object.keys(encontrados).length > 0) return;
-
     const payload = {
       vehiculo: Number(valores.vehiculo),
       descripcion: valores.descripcion.trim(),
@@ -57,13 +48,11 @@ export default function MantenimientoFormulario({ mantenimiento, vehiculos, pres
       fecha_programada: valores.fecha_programada,
       estado: valores.estado,
     };
-
     setGuardando(true);
     const res = editando
       ? await actualizarMantenimiento(mantenimiento.id, payload)
       : await crearMantenimiento(payload);
     setGuardando(false);
-
     if (res.ok) {
       navigate("/mantenimientos", {
         state: { exito: `Mantenimiento ${editando ? "actualizado" : "programado"} correctamente.` },
@@ -72,12 +61,10 @@ export default function MantenimientoFormulario({ mantenimiento, vehiculos, pres
       setErrorServidor(res);
     }
   };
-
   return (
     <form onSubmit={enviar} noValidate className="card card-body" style={{ maxWidth: 640 }}>
       {!esAdmin && <AvisoSoloLectura recurso="mantenimientos" />}
       <AlertError error={general} />
-
       <CampoForm id="vehiculo" etiqueta="Vehículo" obligatorio error={errores.vehiculo}
         ayuda={vehiculoElegido ? `Kilometraje actual: ${formatearKm(vehiculoElegido.kilometraje)}` : undefined}>
         <select id="vehiculo" name="vehiculo" className={claseControl(errores.vehiculo, "form-select")}
@@ -88,12 +75,10 @@ export default function MantenimientoFormulario({ mantenimiento, vehiculos, pres
           ))}
         </select>
       </CampoForm>
-
       <CampoForm id="descripcion" etiqueta="Descripción" obligatorio error={errores.descripcion}>
         <textarea id="descripcion" name="descripcion" rows={3} className={claseControl(errores.descripcion)}
           value={valores.descripcion} onChange={cambiar} />
       </CampoForm>
-
       <div className="row">
         <div className="col-md-6">
           <CampoForm id="kilometraje_objetivo" etiqueta="Kilometraje objetivo" obligatorio
@@ -111,7 +96,6 @@ export default function MantenimientoFormulario({ mantenimiento, vehiculos, pres
           </CampoForm>
         </div>
       </div>
-
       <CampoForm id="estado" etiqueta="Estado" obligatorio error={errores.estado}>
         <select id="estado" name="estado" className={claseControl(errores.estado, "form-select")}
           value={valores.estado} onChange={cambiar}>
@@ -120,7 +104,6 @@ export default function MantenimientoFormulario({ mantenimiento, vehiculos, pres
           ))}
         </select>
       </CampoForm>
-
       <div className="d-flex gap-2">
         <button type="submit" className="btn btn-primary" disabled={guardando}>
           {guardando ? "Guardando..." : editando ? "Guardar cambios" : "Programar mantenimiento"}

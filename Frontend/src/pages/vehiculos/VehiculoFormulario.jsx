@@ -8,9 +8,7 @@ import { usePermisos } from "../../hooks/usePermisos";
 import { actualizarVehiculo, crearVehiculo } from "../../services/vehiculosService";
 import { ESTADOS_VEHICULO } from "../../utils/constantes";
 import { CAMPOS_VEHICULO, validarVehiculo } from "./validarVehiculo";
-
 const VACIO = { placa: "", marca: "", modelo: "", anio: "", kilometraje: "0", estado: "ACTIVO" };
-
 const desdeApi = (v) => ({
   placa: v.placa,
   marca: v.marca,
@@ -19,30 +17,24 @@ const desdeApi = (v) => ({
   kilometraje: String(v.kilometraje),
   estado: v.estado,
 });
-
-// Formulario controlado. En edición recibe `vehiculo` y precarga sus valores.
 export default function VehiculoFormulario({ vehiculo }) {
   const navigate = useNavigate();
   const { esAdmin } = usePermisos();
   const editando = Boolean(vehiculo);
-
   const {
     valores, cambiar, errores, general, guardando,
     setGuardando, setErroresLocales, setErrorServidor,
   } = useFormulario({
     inicial: vehiculo ? desdeApi(vehiculo) : VACIO,
     campos: CAMPOS_VEHICULO,
-    // RN-01: la placa se muestra ya normalizada (mayúsculas, sin espacios).
     normalizar: { placa: (valor) => valor.toUpperCase().replace(/\s/g, "") },
   });
-
   const enviar = async (e) => {
     e.preventDefault();
     setErrorServidor(null);
     const encontrados = validarVehiculo(valores);
     setErroresLocales(encontrados);
     if (Object.keys(encontrados).length > 0) return;
-
     const payload = {
       placa: valores.placa.trim().toUpperCase(),
       marca: valores.marca.trim(),
@@ -51,11 +43,9 @@ export default function VehiculoFormulario({ vehiculo }) {
       kilometraje: Number(valores.kilometraje),
       estado: valores.estado,
     };
-
     setGuardando(true);
     const res = editando ? await actualizarVehiculo(vehiculo.id, payload) : await crearVehiculo(payload);
     setGuardando(false);
-
     if (res.ok) {
       navigate("/vehiculos", {
         state: { exito: `Vehículo ${res.datos.placa} ${editando ? "actualizado" : "creado"} correctamente.` },
@@ -64,18 +54,15 @@ export default function VehiculoFormulario({ vehiculo }) {
       setErrorServidor(res);
     }
   };
-
   return (
     <form onSubmit={enviar} noValidate className="card card-body" style={{ maxWidth: 640 }}>
       {!esAdmin && <AvisoSoloLectura recurso="vehículos" />}
       <AlertError error={general} />
-
       <CampoForm id="placa" etiqueta="Placa" obligatorio error={errores.placa}
         ayuda="Se guarda en mayúsculas y sin espacios (RN-01). Debe ser única.">
         <input id="placa" name="placa" className={claseControl(errores.placa)} value={valores.placa}
           onChange={cambiar} maxLength={15} autoComplete="off" />
       </CampoForm>
-
       <div className="row">
         <div className="col-md-6">
           <CampoForm id="marca" etiqueta="Marca" obligatorio error={errores.marca}>
@@ -90,7 +77,6 @@ export default function VehiculoFormulario({ vehiculo }) {
           </CampoForm>
         </div>
       </div>
-
       <div className="row">
         <div className="col-md-4">
           <CampoForm id="anio" etiqueta="Año" obligatorio error={errores.anio}>
@@ -115,7 +101,6 @@ export default function VehiculoFormulario({ vehiculo }) {
           </CampoForm>
         </div>
       </div>
-
       <div className="d-flex gap-2">
         <button type="submit" className="btn btn-primary" disabled={guardando}>
           {guardando ? "Guardando..." : editando ? "Guardar cambios" : "Crear vehículo"}

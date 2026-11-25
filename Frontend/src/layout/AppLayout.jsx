@@ -1,6 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
 const menu = [
   { to: "/", label: "Dashboard" },
   { to: "/vehiculos", label: "Vehículos" },
@@ -9,10 +8,8 @@ const menu = [
   { to: "/inventario", label: "Inventario" },
   { to: "/ordenes", label: "Órdenes" },
 ];
-
 export default function AppLayout() {
   const { user, logout } = useAuth();
-
   return (
     <div className="d-flex min-vh-100">
       <aside className="bg-dark text-white p-3" style={{ width: 220 }}>
@@ -32,7 +29,6 @@ export default function AppLayout() {
           ))}
         </nav>
       </aside>
-
       <main className="flex-grow-1">
         <header className="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-white">
           <span className="text-muted">
@@ -47,7 +43,6 @@ export default function AppLayout() {
             Cerrar sesión
           </button>
         </header>
-
         <div className="p-4">
           <Outlet />
         </div>

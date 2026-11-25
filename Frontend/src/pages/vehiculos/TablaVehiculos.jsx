@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import BadgeEstado from "../../components/BadgeEstado";
 import { ESTADOS_VEHICULO } from "../../utils/constantes";
 import { formatearKm } from "../../utils/formato";
-
 export default function TablaVehiculos({ vehiculos, esAdmin, onEliminar }) {
   return (
     <div className="table-responsive">

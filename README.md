@@ -1,62 +1,54 @@
 # Participantes:
 
-Daniel Rojas Portillo C5J232
+Daniel Rojas C5J232
 Malcolm Méndez C4H192
 Yariel Jiménez C4G183
-
-# Proyecto-Control-de-Vehiculos
-
-API REST con Django y Django REST Framework para la gestión de una flota
-vehicular y su taller: vehículos, mantenimientos preventivos, órdenes de
-trabajo, inventario de repuestos y proveedores.
 
 ## Requisitos
 
 - Python 3.12+
-- MySQL 8.0+ (o MariaDB compatible) — para pruebas rápidas se puede usar
-  SQLite con `DB_ENGINE=sqlite` (ver más abajo).
-- Dependencias en `requirements.txt` (Django, DRF, mysqlclient, pillow).
+- MySQL 8.0+ para pruebas rápidas se puede usar
+- Dependencias en `requirements.txt`
 
 ## Instalación
 
 ```bash
 # 1. Clonar el repositorio y entrar a la carpeta.
+https://github.com/DanielRP-Ss/Proyecto-Control-de-Vehiculos.git
 
 # 2. Crear y activar el entorno virtual.
 python -m venv .venv
-# Windows:
 .venv\Scripts\activate
-# Linux/Mac:
-source .venv/bin/activate
 
 # 3. Instalar dependencias.
 pip install -r requirements.txt
 
 # 4. Configurar variables de entorno.
-cp .env.example .env   # Windows: copy .env.example .env
-# Editar .env con la SECRET_KEY y las credenciales de MySQL.
+cp .env.example .env 
 ```
 
 ## Base de datos (MySQL)
 
-Crear la base de datos y el usuario (una sola vez):
+Crear la base de datos y el usuario:
 
 ```sql
-CREATE DATABASE control_vehiculos_db
+CREATE DATABASE IF NOT EXISTS control_vehiculos_db
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
-Configure `DB_USER` y `DB_PASSWORD` en `.env` con un usuario de MySQL que tenga
-permisos sobre esta base de datos. Para desarrollo local puede utilizarse `root`,
-pero no se recomienda usarlo en producción.
+CREATE USER IF NOT EXISTS 'control_vehiculos_user'@'%' IDENTIFIED BY 'TuPassword123';
+
+GRANT ALL PRIVILEGES ON control_vehiculos_db.* TO 'control_vehiculos_user'@'%';
+
+FLUSH PRIVILEGES;
 ```
 
 ## Migraciones y usuarios de prueba
 
 ```bash
 python manage.py migrate
-python manage.py crear_usuarios_demo   # roles + usuarios de prueba
-python manage.py createsuperuser       # opcional, para el admin de Django
+python manage.py crear_usuarios_demo   
+python manage.py createsuperuser      
 python manage.py runserver
 ```
 
@@ -69,8 +61,6 @@ El comando `crear_usuarios_demo` crea los grupos de roles y estos usuarios:
 | `consulta`  | `Consulta123*`  | Consulta             |
 
 ## Ejecución de pruebas automatizadas
-
-Las pruebas no requieren servidor MySQL (usan SQLite en memoria):
 
 ```bash
 python manage.py test
@@ -123,9 +113,6 @@ Convención HTTP: usuario anónimo → **401**; rol sin permiso → **403**.
 | RN-07 | El costo total de una orden nunca puede ser negativo. | 400 |
 | RN-08 | Solo se pueden agregar repuestos a órdenes activas (ABIERTA o EN_PROCESO). | 400 |
 | RN-09 | No se puede consumir más cantidad de la disponible en inventario (stock). | 400 |
-
-Además, los borrados protegidos por integridad referencial (proveedor o
-repuesto con registros asociados) devuelven **409 CONFLICT**.
 
 ## Catálogo de endpoints
 
@@ -201,7 +188,6 @@ repuesto con registros asociados) devuelven **409 CONFLICT**.
 Las respuestas de listado incluyen `pagina_actual`, `total_paginas`,
 `total_registros` y `resultados`.
 
-## Colección Postman
 
 En `postman/vehiculos-mantenimientos.postman_collection.json` hay 24 solicitudes
 organizadas por modulo. Configurar la variable de colección `baseUrl` con
@@ -226,3 +212,75 @@ organizadas por modulo. Configurar la variable de colección `baseUrl` con
   recurso), no configurable por el cliente.
 - El inventario no registra movimientos de entrada (compras) ni ajustes;
   solo salidas por consumo.
+
+---
+
+# Frontend — SPA con React y Vite (Proyecto 2)
+
+Interfaz web de tipo Single Page Application que consume la API REST
+anterior mediante `fetch`. Incluye login con token, dashboard con
+indicadores reales, cinco módulos de negocio con CRUD, filtros,
+búsqueda, ordenamiento, paginación y manejo de errores 400/401/403/404/409.
+
+## Requisitos
+
+- Node.js 18+ y npm.
+- El backend corriendo en `http://127.0.0.1:8000` (ver secciones anteriores).
+
+## Instalación y ejecución
+
+```bash
+# 1. Entrar a la carpeta del frontend.
+cd Frontend
+
+# 2. Instalar dependencias.
+npm install
+
+# 3. Configurar la URL base de la API.
+cp .env.example .env   # Windows: copy .env.example .env
+# El valor por defecto es VITE_API_URL=http://127.0.0.1:8000/api
+
+# 4. Iniciar el servidor de desarrollo (Vite, puerto 5173).
+npm run dev
+```
+
+Abrir `http://localhost:5173` en el navegador.
+
+## Configuración de CORS
+
+El backend usa `django-cors-headers` y permite explícitamente los orígenes
+del servidor de desarrollo de Vite en `Control_de_vehiculos/settings.py`:
+
+```python
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
+```
+
+Si el frontend se sirve desde otro origen (otro puerto o dominio), hay que
+agregarlo a esa lista y reiniciar el backend; de lo contrario el navegador
+bloquea las solicitudes con un error de CORS. Las credenciales no se envían
+por cookies: el token viaja en el encabezado `Authorization: Token <token>`,
+por lo que no se requiere `CORS_ALLOW_CREDENTIALS`.
+
+## Autenticación y cierre de sesión
+
+- El login es `POST /api/auth/login/` y devuelve un token de DRF que el
+  frontend guarda en `localStorage` y adjunta en cada solicitud
+  (`Frontend/src/api/api.js`).
+- **El token sí se revoca en el servidor**: `POST /api/auth/logout/`
+  invalida el token del usuario autenticado. Además, el frontend limpia
+  `localStorage` y redirige a `/login`.
+- Si una solicitud recibe 401, el cliente limpia la sesión local y
+  redirige al login (sesión expirada o token inválido).
+- Las rutas privadas se protegen con `PrivateRoute`
+  (`Frontend/src/routes/PrivateRoute.jsx`); el estado de autenticación se
+  comparte con `AuthContext`.
+
+## Usuarios de prueba
+
+Los mismos creados por `python manage.py crear_usuarios_demo`
+(ver tabla en la sección *Migraciones y usuarios de prueba*):
+`admin / Admin123*`, `operador / Operador123*`, `consulta / Consulta123*`.
+Son usuarios ficticios exclusivos para desarrollo y demostración.

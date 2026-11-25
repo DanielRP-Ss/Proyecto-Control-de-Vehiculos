@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 export default function TablaProveedores({ proveedores, esAdmin, onEliminar }) {
   return (
     <div className="table-responsive">

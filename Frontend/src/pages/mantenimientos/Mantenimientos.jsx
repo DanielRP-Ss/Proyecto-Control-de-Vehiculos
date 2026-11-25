@@ -1,8 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import MantenimientosLista from "./MantenimientosLista";
 import MantenimientoFormPage from "./MantenimientoFormPage";
-
-// Se monta en App.jsx como <Route path="/mantenimientos/*" element={<Mantenimientos />} />
 export default function Mantenimientos() {
   return (
     <Routes>

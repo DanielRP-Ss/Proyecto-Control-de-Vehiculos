@@ -5,7 +5,7 @@ from proveedores.models import Proveedor
 from vehiculos.models import Vehiculo
 from ordenes_de_trabajo.models import OrdenTrabajo, ComentarioOrden
 
-from .models import Repuesto
+from inventario.models import Repuesto
 
 
 class InventarioTests(APITestCase):

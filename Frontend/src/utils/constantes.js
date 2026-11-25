@@ -3,7 +3,6 @@ export const ESTADOS_VEHICULO = [
   { valor: "EN_TALLER", etiqueta: "En taller", clase: "text-bg-warning" },
   { valor: "INACTIVO", etiqueta: "Inactivo", clase: "text-bg-secondary" },
 ];
-
 export const ESTADOS_MANTENIMIENTO = [
   { valor: "PENDIENTE", etiqueta: "Pendiente", clase: "text-bg-secondary" },
   { valor: "EN_PROCESO", etiqueta: "En proceso", clase: "text-bg-primary" },

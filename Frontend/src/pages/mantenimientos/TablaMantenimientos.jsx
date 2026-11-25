@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import BadgeEstado from "../../components/BadgeEstado";
 import { ESTADOS_MANTENIMIENTO } from "../../utils/constantes";
 import { formatearFecha, formatearKm } from "../../utils/formato";
-
-// `vehiculosPorId` (Map) permite mostrar la placa en lugar del id de la relación.
 export default function TablaMantenimientos({ mantenimientos, vehiculosPorId, esAdmin, onEliminar }) {
   return (
     <div className="table-responsive">

@@ -1,15 +1,10 @@
 import { useState } from "react";
 import { ESTADOS_VEHICULO } from "../../utils/constantes";
-
 const VACIO = { estado: "", kilometraje_min: "", kilometraje_max: "" };
-
-// Los filtros se aplican en el servidor (query params de GET /vehiculos/).
 export default function FiltrosVehiculos({ inicial, onAplicar }) {
   const [valores, setValores] = useState({ ...VACIO, ...inicial });
   const [errorLocal, setErrorLocal] = useState("");
-
   const cambiar = (e) => setValores({ ...valores, [e.target.name]: e.target.value });
-
   const aplicar = (e) => {
     e.preventDefault();
     const { kilometraje_min: min, kilometraje_max: max } = valores;
@@ -20,13 +15,11 @@ export default function FiltrosVehiculos({ inicial, onAplicar }) {
     setErrorLocal("");
     onAplicar({ ...valores, page: "" });
   };
-
   const limpiar = () => {
     setValores(VACIO);
     setErrorLocal("");
     onAplicar({ ...VACIO, page: "" });
   };
-
   return (
     <form onSubmit={aplicar} className="card card-body mb-3" noValidate>
       <div className="row g-2 align-items-end">

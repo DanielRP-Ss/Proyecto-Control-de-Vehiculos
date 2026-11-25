@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
-from .models import Mantenimiento
+from mantenimientos.models import Mantenimiento
 from vehiculos.models import Vehiculo
 
 

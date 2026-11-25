@@ -1,19 +1,14 @@
 import { useState } from "react";
-
-// La búsqueda la resuelve el servidor (?buscar= por nombre o cédula jurídica).
 export default function BuscadorProveedores({ inicial, onBuscar }) {
   const [texto, setTexto] = useState(inicial ?? "");
-
   const buscar = (e) => {
     e.preventDefault();
     onBuscar({ buscar: texto, page: "" });
   };
-
   const limpiar = () => {
     setTexto("");
     onBuscar({ buscar: "", page: "" });
   };
-
   return (
     <form onSubmit={buscar} className="card card-body mb-3" role="search">
       <div className="row g-2 align-items-end">

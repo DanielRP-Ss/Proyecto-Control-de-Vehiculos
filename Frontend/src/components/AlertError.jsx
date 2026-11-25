@@ -1,6 +1,5 @@
 export default function AlertError({ error }) {
   if (!error) return null;
-
   let mensaje;
   if (!error.status) {
     mensaje = "No se pudo conectar con el servidor";
@@ -30,6 +29,5 @@ export default function AlertError({ error }) {
   } else {
     mensaje = "Ocurrió un error inesperado";
   }
-
   return <div className="alert alert-danger">{mensaje}</div>;
 }

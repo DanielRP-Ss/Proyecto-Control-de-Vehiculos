@@ -13,19 +13,15 @@ import { usePermisos } from "../../hooks/usePermisos";
 import { eliminarVehiculo, listarVehiculos } from "../../services/vehiculosService";
 import FiltrosVehiculos from "./FiltrosVehiculos";
 import TablaVehiculos from "./TablaVehiculos";
-
 const CLAVES_URL = ["estado", "kilometraje_min", "kilometraje_max", "page"];
-
 export default function VehiculosLista() {
   const { esAdmin } = usePermisos();
   const [parametros, actualizar] = useParametrosURL(CLAVES_URL);
   const { cargando, datos, error, recargar } = useConsulta(listarVehiculos, parametros);
-
   const [exito, setExito] = useMensajeFlash();
   const [aEliminar, setAEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
   const [errorBorrado, setErrorBorrado] = useState(null);
-
   const confirmarEliminar = async () => {
     const vehiculo = aEliminar;
     setAEliminar(null);
@@ -39,14 +35,12 @@ export default function VehiculosLista() {
       return;
     }
     setExito(`Vehículo ${vehiculo.placa} eliminado correctamente.`);
-    // Si era el único de la última página, retroceder una página.
     if (datos.resultados.length === 1 && datos.pagina_actual > 1) {
       actualizar({ page: datos.pagina_actual - 1 });
     } else {
       recargar();
     }
   };
-
   let contenido;
   if (cargando || eliminando) {
     contenido = <Loader mensaje="Cargando vehículos..." />;
@@ -67,7 +61,6 @@ export default function VehiculosLista() {
       </>
     );
   }
-
   return (
     <>
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
@@ -78,14 +71,10 @@ export default function VehiculosLista() {
           <span className="badge text-bg-secondary">Solo lectura</span>
         )}
       </div>
-
       <AlertSuccess mensaje={exito} onCerrar={() => setExito("")} />
       <AlertError error={errorBorrado} />
-
       <FiltrosVehiculos key={JSON.stringify(parametros)} inicial={parametros} onAplicar={actualizar} />
-
       {contenido}
-
       {aEliminar && (
         <ConfirmModal
           mensaje={`¿Eliminar el vehículo ${aEliminar.placa}? También se eliminarán sus mantenimientos programados. Si tiene órdenes de trabajo, el servidor no permitirá borrarlo.`}
