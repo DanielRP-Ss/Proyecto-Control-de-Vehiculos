@@ -3,10 +3,12 @@
 .vscode
 
 # Variables de entorno y secretos: nunca subir al repositorio.
-
+.env
 *.pem
 
 # Bases de datos locales y datos de desarrollo.
+db.sqlite3
+*.sqlite3
 
 # Caché de Python.
 __pycache__/
@@ -18,6 +20,6 @@ __pycache__/
 *.tmp
 .DS_Store
 
-
+.env
 dist
 node_modules
