@@ -1,10 +1,4 @@
-# Matriz de perfiles/permisos y escenarios de prueba manual (Req. 17)
-
-La autorización real la aplica Django (401/403 en cada solicitud). El
-frontend adapta la interfaz con `usePermisos` (`Frontend/src/hooks/usePermisos.js`)
-según los roles devueltos por `POST /api/auth/login/`, y muestra
-`AvisoSoloLectura` cuando el perfil es de solo consulta. Ocultar botones es
-solo comodidad visual: si se forzara la acción, el backend respondería 403.
+# Matriz de perfiles/permisos y escenarios de prueba manual 
 
 ## Matriz de perfiles en la interfaz
 

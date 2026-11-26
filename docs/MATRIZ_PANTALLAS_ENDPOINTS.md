@@ -1,4 +1,4 @@
-# Matriz de pantallas y endpoints (Req. 16)
+# Matriz de pantallas y endpoints 
 
 Cada acción de la interfaz (`Frontend/src`) vinculada con su método y ruta
 REST. URL base configurable: `VITE_API_URL` (por defecto
